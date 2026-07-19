@@ -92,3 +92,20 @@ that LZMA exploits; temporal differencing likewise increases compressed bytes.
 
 The required first `xask --spark --gs codex` call timed out after 120 seconds and
 produced no stdout, so the implementation and measurements proceeded in-session.
+
+## Round 3 evidence audit
+
+`EVIDENCE AUDIT: 0 moves with evidence, 4 moves without, 2 dropped, 2 spoof_flagged`
+
+Audit hash `d39f382c0fba657f5958378d8010801a32b9c99c84f4f6e56e8481f54966fb76`
+matched the source-map reveal after blinded scoring. The empty required xask
+payload invalidated the executor's proposal at intake, so a separate reviewer
+re-ran the tests and deterministic 256-case comparison. It reproduced
+`30,632,528 → 28,456,416` bytes (`7.103926%`) and verified local/remote commit
+`715b171a94ed8b5fc7c39f9a91d5fcc26e2b87d9`.
+
+**Final verdict:** accept the benchmark harness because it improves repeatable
+frontier observability without changing submission behavior. Do not promote the
+solid-LZMA candidate: its measured runtime is roughly three times baseline and
+it lacks full-package evidence. Carry the pinned public 4.04 arithmetic-codec
+reproduction route into Round 4.
