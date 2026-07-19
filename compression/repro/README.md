@@ -7,7 +7,7 @@ the VeigaPunk fork, and switches without resetting work to
 `leaderboard/codec-frontier`. Push explicitly with:
 
 ```bash
-git push -u veigapunk HEAD:refs/heads/leaderboard/codec-frontier
+git push -u fork HEAD
 ```
 
 ## M01: locked environment
@@ -35,6 +35,26 @@ reconstructed token SHA-256 are both
 `ad5be8abbcad55bc13e7e39d7c030d814e6262f15444ddb681d1c538e0ad3a4c`.
 The archive and reconstructed token filename are intentionally extensionless,
 matching `evaluate.py` exactly. Generated proof artifacts live under `run/`.
+
+## M03: resumable 5,000-case baseline
+
+```bash
+uv run --frozen python ../compress.py --num-proc 4
+rm -rf ../compression_challenge_submission_decompressed
+mkdir ../compression_challenge_submission_decompressed
+python -m zipfile -e ../compression_challenge_submission.zip ../compression_challenge_submission_decompressed
+OUTPUT_DIR="$PWD/../compression_challenge_submission_decompressed" COMMAVQ_NUM_PROC=4 \
+  uv run --frozen python ../compression_challenge_submission_decompressed/decompress.py
+PACKED_ARCHIVE="$PWD/../compression_challenge_submission.zip" \
+UNPACKED_ARCHIVE="$PWD/../compression_challenge_submission_decompressed" \
+COMMAVQ_NUM_PROC=4 uv run --frozen python ../evaluate.py
+```
+
+The compressor validates every retained payload against its canonical source,
+flushes one progress record per case, and uses fsynced temporary files plus
+atomic replacement for repairs. It rejects non-canonical cardinality, duplicate
+or unsafe names, and stale payload-directory entries before deterministic
+packaging. `lzma-5000-manifest.json` binds all names and source/payload hashes.
 
 Failure traps: Hugging Face access is needed when the shard is not cached;
 excessive worker counts can exhaust memory; and `np.save(path, tokens)` silently
