@@ -111,3 +111,22 @@ retained as the conservative bound on a 30 GiB host with swap already occupied.
 
 Skipping validation of the 2,895 existing paths was rejected: it would reduce
 runtime but could silently preserve artifacts from a different source revision.
+
+## Round 2 evidence audit
+
+`EVIDENCE AUDIT: 2 moves with evidence, 0 moves without, 2 dropped, 1 spoof_flagged`
+
+Audit hash `7196a5604e6e0d100665e4e2ab6969d641ef2d65c5b2bd1cdb207d5b043ffa34`
+was verified after the blinded verdict against the revealed source map. The
+5,000-case baseline move was accepted; the bounded one-case probe was rejected
+as dominated by the full source-validation and fresh-evaluation receipt.
+
+Reviewer triage resolved a generated-receipt discrepancy: the current archive
+is 702 bytes larger because its packaged `decompress.py` grew from an inferred
+1,952 bytes to 2,654 bytes. The current archive size and SHA-256 above match the
+packaged script and all 5,000 manifest payload hashes, so the committed report
+is authoritative for archive identity; the earlier ignored receipt remains
+valid only for encode-run resource statistics.
+
+Baseline commit `e0c09d4636cf467ddadcf3b0438c0e6014f3f944` was pushed to
+`fork/leaderboard/codec-frontier`; local and remote SHAs matched exactly.
