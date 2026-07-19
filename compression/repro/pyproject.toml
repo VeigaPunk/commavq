@@ -1,0 +1,11 @@
+[project]
+name = "commavq-lzma-baseline-repro"
+version = "0.1.0"
+requires-python = "==3.11.*"
+dependencies = [
+  "datasets==4.0.0",
+  "numpy",
+]
+
+[tool.uv]
+package = false
