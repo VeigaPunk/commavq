@@ -77,3 +77,19 @@ orders, modulo-1024 temporal delta, 10-bit packing, and a nested zlib/LZMA probe
 `logical_ratio` uses the evaluator's 10-bit numerator. `materialized_bytes_bound`
 is a deterministic bound for payloads retained by the harness; the separate
 process high-water RSS includes dataset loading and codec internals.
+
+## M05: pinned public neural-codec probe
+
+`neural_codec_r4.py` pins the external codec, canonical dataset, and ONNX model
+by immutable revisions and verifies the model's byte count and SHA-256. It does
+not vendor either external repository or the 614 MB model:
+
+```bash
+python neural_codec_r4.py fetch
+python neural_codec_r4.py probe --frames 3
+```
+
+Use `--frames 22` to cross the codec's 19-frame context boundary. The probe
+separately reports bitstream, decoder source/zip, external model, runtime, and
+RSS bytes, and identifies evaluator-package blockers rather than treating an
+unmeasured bitstream projection as a valid submission score.

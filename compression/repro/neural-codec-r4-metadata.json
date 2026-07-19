@@ -1,0 +1,29 @@
+{
+  "case": "3b41c0fa8959aea6c118e5714f412a2e_13",
+  "codec": {
+    "commit": "5bc967f218c551eeb74387b5ce016586baed77a2",
+    "repository": "https://github.com/ykstorm/commavq-lossless-codec.git"
+  },
+  "dataset": {
+    "files": [
+      "data-0000.tar.gz",
+      "data-0001.tar.gz"
+    ],
+    "repository": "commaai/commavq",
+    "revision": "795c839a57b3c4eebd1a28b1ec04eb56d6000e81"
+  },
+  "model": {
+    "bytes": 614166933,
+    "filename": "gpt2m.onnx",
+    "repository": "commaai/commavq-gpt2m",
+    "revision": "12f0a5e31c22b492dc391aa348cbe422139e3087",
+    "sha256": "d2ee2bd95bc09811404938359395ce78a6dd59a540a44d781f838219752d6cd0"
+  },
+  "probe_requirements": [
+    "numpy==2.4.6",
+    "onnxruntime==1.27.0",
+    "datasets==5.0.0",
+    "huggingface-hub==1.24.0"
+  ],
+  "schema": 1
+}
