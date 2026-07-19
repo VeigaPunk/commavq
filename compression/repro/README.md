@@ -60,3 +60,20 @@ Failure traps: Hugging Face access is needed when the shard is not cached;
 excessive worker counts can exhaust memory; and `np.save(path, tokens)` silently
 appends `.npy` to extensionless case names. The submitted decompressor writes
 through an open file handle to preserve the evaluator's exact path.
+
+## M04: deterministic codec frontier
+
+The Round-3 harness fixes selection to the first `N` rows of the pinned canonical
+split, checks every decode against its source, uses deterministic compressor
+settings, and keeps generated JSON under ignored `run/`:
+
+```bash
+uv run --frozen python -m unittest -v test_codec_frontier_benchmark.py
+uv run --frozen python codec_frontier_benchmark.py --cases 256 --repeats 3
+```
+
+The catalog covers per-example and solid standard-library codecs, three stream
+orders, modulo-1024 temporal delta, 10-bit packing, and a nested zlib/LZMA probe.
+`logical_ratio` uses the evaluator's 10-bit numerator. `materialized_bytes_bound`
+is a deterministic bound for payloads retained by the harness; the separate
+process high-water RSS includes dataset loading and codec internals.
