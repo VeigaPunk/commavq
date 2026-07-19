@@ -7,10 +7,11 @@ external standing, and resource durability
 
 ## Claim
 
-The pinned upstream core exactly round-trips the canonical first case through
-22 frames on CPU and CUDA, but commit `5bc967f` is not a reproducible evaluator
-package and a 5,000-case score above 4.0 is not achievable with the measured
-implementation and available host resources.
+The pinned upstream core reproducibly round-trips a canonical three-frame CPU
+prefix, but commit `5bc967f` is not an evaluator-compatible package and this
+round does not establish a 5,000-case score above 4.0. Longer CPU and CUDA rows
+were observed during exploration but were not retained in reproducible artifacts;
+they are excluded from the verified frontier below.
 
 ## Immutable inputs
 
@@ -48,27 +49,19 @@ The README's 47-test badge is stale; the pinned tree contains 50 passing tests.
 
 ## Exact bounded probes
 
-Both probes use the same provider for encode and decode. `bpt` includes range
-coder termination bytes. RSS is process high-water RSS and excludes GPU VRAM.
+The retained probe uses CPU for encode and decode. `bpt` includes range-coder
+termination bytes. RSS is process high-water RSS.
 
 | Provider | Frames | Context boundary | Bytes | bpt | 10-bit ratio | Encode s | Decode s | Wall s | Peak RSS KiB | Exact |
 |---|---:|:---:|---:|---:|---:|---:|---:|---:|---:|:---:|
-| CPU | 3 | no | 197 | 4.104167 | 2.436548 | 14.990 | 12.228 | 28.651 | 3,676,848 | yes |
-| CPU | 22 | yes | 570 | 1.619318 | 6.175439 | 249.649 | 390.311 | 641.648 | 7,423,696 | yes |
-| CUDA | 22 | yes | 570 | 1.619318 | 6.175439 | 45.703 | 45.878 | 92.205 | 2,429,936 | yes |
+| CPU | 3 | no | 197 | 4.104167 | 2.436548 | 12.369 | 13.215 | 28.000 | not retained | yes |
 
 The CPU 3-frame bitstream SHA-256 is
 `ed06cc000d81a6bb427844f1d4bef95e0da52ce8185dacedb78e4727ca9f3eb0`.
-The CPU 22-frame bitstream SHA-256 is
-`b35c1df60d524f4d269e6a10c840c5ffc8316c3bbc90001f9242ca3d05b30472`.
-The 22-frame result crosses the 19-frame sliding-context boundary and proves an
-autoregressive inverse without spending an estimated 80+ minutes on one full
-1,200-frame GPU round trip. Its unusually easy first-clip rate is not used as a
-dataset-wide score.
-
-CUDA required local CUDA 12/cuDNN 9 runtime wheels; the installed RTX 5070 has
-12,227 MiB. A first attempt without those libraries fell back to CPU, so provider
-availability was checked from the actual session before retaining CUDA timing.
+No retained probe crosses the 19-frame sliding-context boundary. The committed
+harness currently hard-codes `CPUExecutionProvider`; therefore earlier CUDA
+timings and longer 22-frame observations are unsupported and must not be used
+for qualification or feasibility claims.
 
 ## Decoder, model, and package bytes
 
@@ -111,14 +104,13 @@ These are package failures, not failures of the bounded range-code inverse.
 
 ## 5,000-case feasibility
 
-There are 6,000,000 frames. Linear extrapolation from the 22-frame CUDA proof is
-144.3 encode days plus 144.8 decode days for one process. The CPU measurements
-are slower and reached 7.1 GiB RSS. Parallelism is constrained by the single
-12-GB GPU, while upstream's implementation processes one segment and token at a
-time. No full-case or 5,000-case run was started after the bounded context probe.
+There are 6,000,000 frames. The verified three-frame CPU probe is too short and
+too context-dependent for a defensible full-run extrapolation. Upstream processes
+one segment and token at a time, but this round does not prove full execution
+impossible. No full-case or 5,000-case neural run was started.
 
 The external 4.04 standing remains an upstream assertion: this round verifies
-the mechanism and one canonical prefix, not the full score.
+the mechanism and one short canonical prefix, not the full score.
 
 ## RED / GREEN
 
@@ -137,3 +129,19 @@ checks, together with all prior reproduction tests:
 Ran 10 tests in 1.271s
 OK
 ```
+
+## Round 4 evidence audit and boundary
+
+`EVIDENCE AUDIT: 6 moves with evidence, 3 moves without, 1 dropped, 7 spoof_flagged`
+
+Reviewer triage verified the commit/remote identity, ten local tests, fifty
+upstream tests, model size/hash, decoder-package arithmetic, and the retained
+three-frame CPU probe. It rejected the unretained 22-frame CPU/CUDA claims and
+confirmed that the committed harness cannot select CUDA.
+
+The official page currently displays `pmazumder3927` at 4.0 and labels commaVQ
+ACTIVE, while the repository says the prize ended on 2024-07-01. The linked form
+returned HTTP 401 to automated access, which does not prove interactive closure.
+Consequently this round establishes neither official first place nor a conclusive
+closed-submission boundary. It establishes a reproducible technical lead and the
+remaining external acceptance requirement.
